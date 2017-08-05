@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Контрльная работа</title>
+    <script type="text/javascript" src="program.js"></script>
+    <style type="text/css">
+      canvas { border: 1px solid black; }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      drawer = null;
+
+      function buildDrawer() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const angle = parseInt(angleInput.value);
+        const delay = parseInt(delayInput.value);
+        const centerData = centerInput.value.match(/(\d+),(\d+)/);
+        const lineData = lineInput.value.match(/(\d+),(\d+);\s(\d+),(\d+)/);
+
+        const center = new Point(parseInt(centerData[1]), parseInt(centerData[2]));
+        const start = new Point(parseInt(lineData[1]), parseInt(lineData[2]));
+        const end = new Point(parseInt(lineData[3]), parseInt(lineData[4]));
+
+        return new Drawer(ctx, delay, center, angle, start, end);
+      }
+
+
+      function stopAnimation() {
+        if(drawer) {
+          drawer.stopDraw();
+        }
+      }
+
+      function renderSettings() {
+        stopAnimation();
+        buildDrawer().draw();
+        return true;
+      }
+
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.getElementById('runButton').onclick = function() {
+          drawer = buildDrawer();
+          drawer.startDraw();
+        };
+
+        renderSettings();
+      })
+    </script>
+
+    <canvas id="canvas" width="300px" height="300px"></canvas>
+    <p>Угол: <input type="number" id="angleInput" value="45" onkeyup="renderSettings();" /></p>
+    <p>Перерисовка (мс): <input type="number" id="delayInput" value="80" onkeyup="renderSettings();" /></p>
+    <p>Центр: <input type="text" id="centerInput" value="150,150" onkeyup="renderSettings();" /></p>
+    <p>Координаты линии <input type="text" id="lineInput" value="20,150; 280,150" onkeyup="renderSettings();" /></p>
+    <br/>
+    <button id="runButton">Запустить</button>
+    <button id="stopButton" onclick="stopAnimation();">Остановить</button>
+  </body>
+</html>
